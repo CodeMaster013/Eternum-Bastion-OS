@@ -257,7 +257,8 @@ const MagicalOS: React.FC = () => {
             { id: 'spellcraft', name: 'Spell Crafting', icon: '🔮' },
             { id: 'souls', name: 'Soul Registry', icon: '👥' },
             { id: 'prophecy', name: 'Prophecy Engine', icon: '🔮' },
-            { id: 'energy', name: 'Energy Manager', icon: '⚡' }
+            { id: 'energy', name: 'Energy Manager', icon: '⚡' },
+            { id: 'llama', name: 'Llama 3.2', icon: '🤖' }
           ].map((module) => (
             <motion.button
               key={module.id}
