@@ -199,7 +199,7 @@ const MagicalOS: React.FC = () => {
               }}
             />
             <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 magical-glow">
-              ETERNUM BASTION OS
+              ETERNUM OS
             </h1>
           </div>
           
