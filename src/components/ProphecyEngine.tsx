@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Crystal, Sparkles, Eye, RefreshCw, BookOpen, AlertTriangle } from 'lucide-react';
+import { Italic as Crystal, Sparkles, Eye, RefreshCw, BookOpen, AlertTriangle } from 'lucide-react';
 import { SystemNotification } from './MagicalOS';
 
 interface User {
