@@ -9,6 +9,7 @@ import SpellCraftingModule from './SpellCraftingModule';
 import SoulRegistry from './SoulRegistry';
 import ProphecyEngine from './ProphecyEngine';
 import VoiceCommandInterface from './VoiceCommandInterface';
+import MnemosyneAI from './MnemosyneAI';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface User {
@@ -164,7 +165,8 @@ const MagicalOS: React.FC = () => {
       energyAllocations={energyAllocations} 
       onUpdateAllocation={updateEnergyAllocation}
       onNotification={addNotification}
-    />
+    />,
+    llama: <MnemosyneAI user={user} onNotification={addNotification} />
   };
 
   return (
@@ -258,7 +260,7 @@ const MagicalOS: React.FC = () => {
             { id: 'souls', name: 'Soul Registry', icon: '👥' },
             { id: 'prophecy', name: 'Prophecy Engine', icon: '🔮' },
             { id: 'energy', name: 'Energy Manager', icon: '⚡' },
-            { id: 'llama', name: 'Llama 3.2', icon: '🤖' }
+            { id: 'llama', name: 'Mnemosyne-Elyr', icon: '🧠' }
           ].map((module) => (
             <motion.button
               key={module.id}
@@ -316,6 +318,14 @@ const MagicalOS: React.FC = () => {
       {/* Voice Command Interface */}
       {voiceEnabled && (
         <VoiceCommandInterface 
+          user={user}
+          onNotification={addNotification}
+        />
+      )}
+
+      {/* Mnemosyne-Elyr AI Interface */}
+      {activeModule !== 'llama' && (
+        <MnemosyneAI 
           user={user}
           onNotification={addNotification}
         />

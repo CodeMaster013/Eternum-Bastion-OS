@@ -146,6 +146,30 @@
   }
 }
 
+/* Boot Sequence Effects */
+.boot-glow {
+  box-shadow: 
+    0 0 20px rgba(139, 92, 246, 0.5),
+    0 0 40px rgba(139, 92, 246, 0.3),
+    0 0 60px rgba(139, 92, 246, 0.1);
+  animation: boot-pulse 2s ease-in-out infinite alternate;
+}
+
+@keyframes boot-pulse {
+  0% {
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.5),
+      0 0 40px rgba(139, 92, 246, 0.3),
+      0 0 60px rgba(139, 92, 246, 0.1);
+  }
+  100% {
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 0.7),
+      0 0 60px rgba(139, 92, 246, 0.5),
+      0 0 90px rgba(139, 92, 246, 0.3);
+  }
+}
+
 /* Terminal Text Effects */
 .sparkle-text {
   animation: sparkle 2s ease-in-out infinite;
