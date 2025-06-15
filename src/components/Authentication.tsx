@@ -63,7 +63,7 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
               <Zap className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
-              ETERNUM BASTION
+              ETERNUM OS
             </h1>
             <p className="text-purple-300 text-sm">Mystical Access Terminal</p>
           </div>

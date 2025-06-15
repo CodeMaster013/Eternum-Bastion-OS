@@ -201,7 +201,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) => {
               animate={{ opacity: [0.7, 1, 0.7] }}
               transition={{ duration: 2, repeat: Infinity }}
             >
-              ETERNUM BASTION
+              ETERNUM OS
             </motion.h1>
             
             <motion.p
@@ -247,7 +247,7 @@ const BootSequence: React.FC<BootSequenceProps> = ({ onBootComplete }) => {
             {/* Boot Header */}
             <div className="text-center mb-12">
               <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-4">
-                ETERNUM BASTION INITIALIZATION
+                ETERNUM OS INITIALIZATION
               </h1>
               <div className="w-full bg-gray-800 rounded-full h-3 mb-4">
                 <motion.div

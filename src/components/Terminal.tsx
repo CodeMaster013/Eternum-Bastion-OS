@@ -50,7 +50,7 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
     if (tabs[0].history.length === 0) {
       const welcomeMessages = [
         { type: 'system' as const, content: '╔══════════════════════════════════════════════════════════════╗', effects: ['glow'] },
-        { type: 'system' as const, content: '║              ETERNUM BASTION MYSTICAL INTERFACE              ║', effects: ['glow'] },
+        { type: 'system' as const, content: '║                      ETERNUM OS INTERFACE                    ║', effects: ['glow'] },
         { type: 'system' as const, content: '╚══════════════════════════════════════════════════════════════╝', effects: ['glow'] },
         { type: 'system' as const, content: '', effects: [] },
         { type: 'system' as const, content: `🔮 Welcome, ${user.username}`, effects: ['sparkle'] },
