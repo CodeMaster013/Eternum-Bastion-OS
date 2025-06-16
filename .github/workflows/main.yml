@@ -1,2 +1,0 @@
-- name: Deploy app to GitHub Pages
-  uses: lr0pb/deploy-pages@v1.0.0
