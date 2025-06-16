@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { ChevronRight, Terminal as TerminalIcon } from 'lucide-react';
+import { ChevronRight, Terminal as TerminalIcon, Plus, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import CommandProcessor from './CommandProcessor';
 import { SystemNotification } from './MagicalOS';
@@ -39,11 +39,23 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState(-1);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const terminalRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const commandProcessor = new CommandProcessor(user);
   const activeTab = tabs.find(tab => tab.id === activeTabId) || tabs[0];
+
+  useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Welcome message for the first tab
@@ -270,13 +282,13 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
 
   return (
     <div className={`h-full flex flex-col ${getThemeClasses()} backdrop-blur-sm`}>
-      {/* Terminal Tabs */}
-      <div className="flex items-center border-b border-purple-500/30 bg-black/20">
-        <div className="flex flex-1 overflow-x-auto">
+      {/* Terminal Tabs - Responsive */}
+      <div className="flex items-center border-b border-purple-500/30 bg-black/20 overflow-x-auto">
+        <div className="flex flex-1 min-w-0">
           {tabs.map((tab) => (
             <motion.div
               key={tab.id}
-              className={`flex items-center px-4 py-2 border-r border-purple-500/20 cursor-pointer transition-colors ${
+              className={`flex items-center px-2 md:px-4 py-2 border-r border-purple-500/20 cursor-pointer transition-colors whitespace-nowrap ${
                 activeTabId === tab.id
                   ? 'bg-purple-500/20 text-purple-300'
                   : 'text-purple-400 hover:bg-purple-500/10'
@@ -284,16 +296,18 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
               onClick={() => setActiveTabId(tab.id)}
               whileHover={{ scale: 1.02 }}
             >
-              <span className="text-sm mr-2">{tab.name}</span>
+              <span className="text-xs md:text-sm mr-1 md:mr-2 truncate max-w-20 md:max-w-none">
+                {isMobile ? `T${tabs.indexOf(tab) + 1}` : tab.name}
+              </span>
               {tabs.length > 1 && (
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     closeTab(tab.id);
                   }}
-                  className="text-xs hover:text-red-400 ml-2"
+                  className="text-xs hover:text-red-400 ml-1"
                 >
-                  ×
+                  <X size={12} />
                 </button>
               )}
             </motion.div>
@@ -302,32 +316,32 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
         
         <button
           onClick={addNewTab}
-          className="px-3 py-2 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors"
+          className="px-2 md:px-3 py-2 text-purple-400 hover:text-purple-300 hover:bg-purple-500/10 transition-colors flex-shrink-0"
           title="New Terminal"
         >
-          +
+          <Plus size={16} />
         </button>
       </div>
 
       {/* Terminal Header */}
-      <div className="flex items-center justify-between p-3 border-b border-purple-500/30 bg-black/20">
-        <div className="flex items-center space-x-2">
-          <TerminalIcon size={18} className="text-purple-400" />
-          <span className="text-purple-300 text-sm font-medium">
-            {activeTab.name} - Mystical Command Interface
+      <div className="flex items-center justify-between p-2 md:p-3 border-b border-purple-500/30 bg-black/20">
+        <div className="flex items-center space-x-2 min-w-0 flex-1">
+          <TerminalIcon size={isMobile ? 16 : 18} className="text-purple-400 flex-shrink-0" />
+          <span className="text-purple-300 text-xs md:text-sm font-medium truncate">
+            {isMobile ? 'Terminal' : `${activeTab.name} - Mystical Command Interface`}
           </span>
         </div>
-        <div className="flex space-x-2">
-          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-          <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-          <div className={`w-3 h-3 rounded-full ${isExecuting ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`}></div>
+        <div className="flex space-x-1 md:space-x-2 flex-shrink-0">
+          <div className="w-2 h-2 md:w-3 md:h-3 bg-red-500 rounded-full"></div>
+          <div className="w-2 h-2 md:w-3 md:h-3 bg-yellow-500 rounded-full"></div>
+          <div className={`w-2 h-2 md:w-3 md:h-3 rounded-full ${isExecuting ? 'bg-orange-500 animate-pulse' : 'bg-green-500'}`}></div>
         </div>
       </div>
 
       {/* Terminal Content */}
       <div
         ref={terminalRef}
-        className="flex-1 overflow-y-auto p-4 font-mono text-sm space-y-1"
+        className="flex-1 overflow-y-auto p-2 md:p-4 font-mono text-xs md:text-sm space-y-1"
         onClick={() => inputRef.current?.focus()}
       >
         <AnimatePresence>
@@ -337,10 +351,10 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3 }}
-              className={`${getLineClass(line.type, line.effects)} leading-relaxed`}
+              className={`${getLineClass(line.type, line.effects)} leading-relaxed break-words`}
             >
               {line.type === 'command' && (
-                <span className="text-purple-400 mr-2">{getPrompt()}</span>
+                <span className="text-purple-400 mr-1 md:mr-2 flex-shrink-0">{getPrompt()}</span>
               )}
               <span className="whitespace-pre-wrap">{line.content}</span>
             </motion.div>
@@ -349,22 +363,23 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
         
         {/* Current Input Line */}
         <div className="flex items-center">
-          <span className="text-purple-400 mr-2">{getPrompt()}</span>
+          <span className="text-purple-400 mr-1 md:mr-2 flex-shrink-0">{getPrompt()}</span>
           <input
             ref={inputRef}
             type="text"
             value={activeTab.currentCommand}
             onChange={(e) => updateCurrentCommand(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="flex-1 bg-transparent outline-none text-cyan-300 font-mono"
+            className="flex-1 bg-transparent outline-none text-cyan-300 font-mono min-w-0"
             disabled={isExecuting}
             autoFocus
           />
           <motion.div
             animate={{ opacity: [1, 0, 1] }}
             transition={{ duration: 1, repeat: Infinity }}
+            className="flex-shrink-0"
           >
-            <ChevronRight size={16} className="text-purple-400 ml-1" />
+            <ChevronRight size={isMobile ? 14 : 16} className="text-purple-400 ml-1" />
           </motion.div>
         </div>
         
@@ -375,8 +390,8 @@ const Terminal: React.FC<TerminalProps> = ({ user, onNotification, currentTheme 
             animate={{ opacity: 1 }}
             className="flex items-center space-x-2 text-yellow-400"
           >
-            <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-            <span className="text-sm">Executing mystical command...</span>
+            <div className="w-1.5 h-1.5 md:w-2 md:h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+            <span className="text-xs md:text-sm">Executing mystical command...</span>
           </motion.div>
         )}
       </div>

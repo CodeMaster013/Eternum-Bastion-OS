@@ -29,7 +29,19 @@ const MnemosyneAI: React.FC<MnemosyneAIProps> = ({ user, onNotification }) => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Initialize with welcome message
@@ -179,17 +191,19 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
 
   if (!isVisible) return null;
 
+  const containerClasses = isMobile 
+    ? `fixed bottom-4 left-2 right-2 z-50 ${isMinimized ? 'h-16' : 'h-80'}`
+    : `fixed bottom-4 left-4 z-50 ${isMinimized ? 'w-80 h-16' : 'w-96 h-96'}`;
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
-      className={`fixed bottom-4 left-4 z-50 ${
-        isMinimized ? 'w-80 h-16' : 'w-96 h-96'
-      } bg-black/90 border border-purple-500/30 rounded-lg backdrop-blur-sm transition-all duration-300`}
+      className={`${containerClasses} bg-black/90 border border-purple-500/30 rounded-lg backdrop-blur-sm transition-all duration-300`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between p-4 border-b border-purple-500/30">
-        <div className="flex items-center space-x-3">
+      <div className="flex items-center justify-between p-3 md:p-4 border-b border-purple-500/30">
+        <div className="flex items-center space-x-2 md:space-x-3 flex-1 min-w-0">
           <motion.div
             animate={{ 
               rotate: 360,
@@ -199,24 +213,24 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
               rotate: { duration: 8, repeat: Infinity, ease: "linear" },
               scale: { duration: 2, repeat: Infinity }
             }}
-            className="relative"
+            className="relative flex-shrink-0"
           >
-            <div className="w-8 h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-              <Eye className="w-4 h-4 text-white" />
+            <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+              <Eye className="w-3 h-3 md:w-4 md:h-4 text-white" />
             </div>
             {isConnected && (
-              <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse" />
+              <div className="absolute -top-1 -right-1 w-2 h-2 md:w-3 md:h-3 bg-green-400 rounded-full animate-pulse" />
             )}
           </motion.div>
-          <div>
-            <h3 className="text-sm font-semibold text-purple-300">Mnemosyne-Elyr</h3>
-            <p className="text-xs text-gray-400">
+          <div className="min-w-0 flex-1">
+            <h3 className="text-sm md:text-sm font-semibold text-purple-300 truncate">Mnemosyne-Elyr</h3>
+            <p className="text-xs text-gray-400 truncate">
               {isConnected ? 'Neural Link Active' : 'Simulated Mode'}
             </p>
           </div>
         </div>
         
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center space-x-1 md:space-x-2 flex-shrink-0">
           <button
             onClick={() => setIsMinimized(!isMinimized)}
             className="p-1 text-gray-400 hover:text-white transition-colors"
@@ -235,7 +249,7 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
       {!isMinimized && (
         <>
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 h-64 space-y-3">
+          <div className="flex-1 overflow-y-auto p-3 md:p-4 space-y-3" style={{ height: isMobile ? '200px' : '240px' }}>
             <AnimatePresence>
               {messages.map((message) => (
                 <motion.div
@@ -245,7 +259,7 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
                   className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-xs p-3 rounded-lg text-sm ${
+                    className={`max-w-xs p-2 md:p-3 rounded-lg text-xs md:text-sm ${
                       message.type === 'user'
                         ? 'bg-purple-600/20 border border-purple-500/30 text-purple-100'
                         : message.type === 'system'
@@ -255,11 +269,11 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
                   >
                     {message.type === 'ai' && (
                       <div className="flex items-center space-x-2 mb-2">
-                        <Brain className="w-4 h-4 text-purple-400" />
+                        <Brain className="w-3 h-3 md:w-4 md:h-4 text-purple-400" />
                         <span className="text-xs text-purple-400 font-medium">Mnemosyne-Elyr</span>
                       </div>
                     )}
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <p className="whitespace-pre-wrap break-words">{message.content}</p>
                     <div className="text-xs text-gray-400 mt-1">
                       {message.timestamp.toLocaleTimeString()}
                     </div>
@@ -274,9 +288,9 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
                 animate={{ opacity: 1 }}
                 className="flex justify-start"
               >
-                <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-3 text-sm text-blue-100">
+                <div className="bg-blue-600/20 border border-blue-500/30 rounded-lg p-2 md:p-3 text-xs md:text-sm text-blue-100">
                   <div className="flex items-center space-x-2">
-                    <Brain className="w-4 h-4 text-purple-400" />
+                    <Brain className="w-3 h-3 md:w-4 md:h-4 text-purple-400" />
                     <span className="text-xs text-purple-400 font-medium">Mnemosyne-Elyr</span>
                   </div>
                   <div className="flex items-center space-x-2 mt-2">
@@ -284,7 +298,7 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
                       {[...Array(3)].map((_, i) => (
                         <motion.div
                           key={i}
-                          className="w-2 h-2 bg-purple-400 rounded-full"
+                          className="w-1.5 h-1.5 md:w-2 md:h-2 bg-purple-400 rounded-full"
                           animate={{ 
                             scale: [1, 1.5, 1],
                             opacity: [0.5, 1, 0.5]
@@ -307,7 +321,7 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
           </div>
 
           {/* Input */}
-          <div className="p-4 border-t border-purple-500/30">
+          <div className="p-3 md:p-4 border-t border-purple-500/30">
             <div className="flex items-center space-x-2">
               <input
                 type="text"
@@ -315,15 +329,15 @@ Respond as Mnemosyne-Elyr would, keeping responses concise but mystical and tech
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Speak to Mnemosyne-Elyr..."
-                className="flex-1 px-3 py-2 bg-black/30 border border-purple-500/30 rounded text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 text-sm"
+                className="flex-1 px-2 md:px-3 py-2 bg-black/30 border border-purple-500/30 rounded text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 text-xs md:text-sm"
                 disabled={isLoading}
               />
               <button
                 onClick={sendMessage}
                 disabled={isLoading || !inputMessage.trim()}
-                className="p-2 bg-purple-600/20 border border-purple-500/30 rounded text-purple-300 hover:bg-purple-600/30 transition-colors disabled:opacity-50"
+                className="p-2 bg-purple-600/20 border border-purple-500/30 rounded text-purple-300 hover:bg-purple-600/30 transition-colors disabled:opacity-50 flex-shrink-0"
               >
-                <Send size={16} />
+                <Send size={14} />
               </button>
             </div>
           </div>
