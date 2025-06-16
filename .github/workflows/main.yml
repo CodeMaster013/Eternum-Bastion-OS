@@ -1,0 +1,30 @@
+name: Deploy app
+
+on:
+  push:
+    branches: ['main']
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.url }}
+    steps:
+      - name: Deploy app to GitHub Pages
+        uses: lr0pb/deploy-pages@v1
+        id: deployment
+        with:
+          node-version: 18.x
+          build-comand: 'build'
+          output-dir: 'dist'
