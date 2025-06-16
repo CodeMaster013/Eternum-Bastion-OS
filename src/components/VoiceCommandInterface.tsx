@@ -19,8 +19,21 @@ const VoiceCommandInterface: React.FC<VoiceCommandInterfaceProps> = ({ user, onN
   const [transcript, setTranscript] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [voiceLevel, setVoiceLevel] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
+
+  useEffect(() => {
+    // Check if mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     // Check for speech recognition support
@@ -247,36 +260,36 @@ const VoiceCommandInterface: React.FC<VoiceCommandInterfaceProps> = ({ user, onN
 
   if (!recognitionRef.current) {
     return (
-      <div className="fixed bottom-4 right-4 bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-300">
-        <p className="text-sm">Voice commands not supported in this browser</p>
+      <div className={`fixed ${isMobile ? 'bottom-20 right-2' : 'bottom-4 right-4'} bg-red-900/20 border border-red-500/30 rounded-lg p-3 md:p-4 text-red-300 max-w-xs`}>
+        <p className="text-xs md:text-sm">Voice commands not supported in this browser</p>
       </div>
     );
   }
 
   return (
-    <div className="fixed bottom-4 right-4 z-40">
+    <div className={`fixed ${isMobile ? 'bottom-20 right-2' : 'bottom-4 right-4'} z-40`}>
       <AnimatePresence>
         {(isListening || isProcessing || transcript) && (
           <motion.div
             initial={{ opacity: 0, y: 20, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.8 }}
-            className="mb-4 bg-black/80 border border-purple-500/30 rounded-lg p-4 backdrop-blur-sm max-w-sm"
+            className={`mb-4 bg-black/80 border border-purple-500/30 rounded-lg p-3 md:p-4 backdrop-blur-sm ${isMobile ? 'max-w-xs' : 'max-w-sm'}`}
           >
             {isProcessing ? (
               <div className="flex items-center space-x-2">
-                <div className="w-4 h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
-                <span className="text-purple-300 text-sm">Processing incantation...</span>
+                <div className="w-3 h-3 md:w-4 md:h-4 border-2 border-purple-400 border-t-transparent rounded-full animate-spin"></div>
+                <span className="text-purple-300 text-xs md:text-sm">Processing incantation...</span>
               </div>
             ) : transcript ? (
               <div>
                 <div className="text-xs text-purple-400 mb-1">Recognized:</div>
-                <div className="text-sm text-white">{transcript}</div>
+                <div className="text-xs md:text-sm text-white break-words">{transcript}</div>
               </div>
             ) : (
               <div className="flex items-center space-x-2">
-                <Volume2 size={16} className="text-green-400" />
-                <span className="text-green-300 text-sm">Listening for commands...</span>
+                <Volume2 size={isMobile ? 14 : 16} className="text-green-400 flex-shrink-0" />
+                <span className="text-green-300 text-xs md:text-sm">Listening for commands...</span>
                 <div className="flex space-x-1">
                   {[...Array(5)].map((_, i) => (
                     <div
@@ -294,46 +307,76 @@ const VoiceCommandInterface: React.FC<VoiceCommandInterfaceProps> = ({ user, onN
         )}
       </AnimatePresence>
 
-      <motion.button
-        onClick={isListening ? stopListening : startListening}
-        className={`w-16 h-16 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
-          isListening
-            ? 'bg-red-500/20 border-red-400 text-red-400 hover:bg-red-500/30'
-            : 'bg-purple-500/20 border-purple-400 text-purple-400 hover:bg-purple-500/30'
-        }`}
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        animate={isListening ? { 
-          boxShadow: [
-            '0 0 0 0 rgba(239, 68, 68, 0.4)',
-            '0 0 0 10px rgba(239, 68, 68, 0)',
-            '0 0 0 0 rgba(239, 68, 68, 0)'
-          ]
-        } : {}}
-        transition={isListening ? { 
-          duration: 1.5, 
-          repeat: Infinity 
-        } : {}}
-      >
-        {isListening ? <MicOff size={24} /> : <Mic size={24} />}
-      </motion.button>
+      <div className="flex items-center space-x-2">
+        {/* Help Button - Mobile only */}
+        {isMobile && (
+          <motion.button
+            onClick={() => setShowHelp(!showHelp)}
+            className="w-12 h-12 rounded-full border-2 border-blue-400 bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 flex items-center justify-center transition-all duration-200"
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            ?
+          </motion.button>
+        )}
+
+        {/* Voice Button */}
+        <motion.button
+          onClick={isListening ? stopListening : startListening}
+          className={`${isMobile ? 'w-12 h-12' : 'w-16 h-16'} rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+            isListening
+              ? 'bg-red-500/20 border-red-400 text-red-400 hover:bg-red-500/30'
+              : 'bg-purple-500/20 border-purple-400 text-purple-400 hover:bg-purple-500/30'
+          }`}
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
+          animate={isListening ? { 
+            boxShadow: [
+              '0 0 0 0 rgba(239, 68, 68, 0.4)',
+              '0 0 0 10px rgba(239, 68, 68, 0)',
+              '0 0 0 0 rgba(239, 68, 68, 0)'
+            ]
+          } : {}}
+          transition={isListening ? { 
+            duration: 1.5, 
+            repeat: Infinity 
+          } : {}}
+        >
+          {isListening ? <MicOff size={isMobile ? 20 : 24} /> : <Mic size={isMobile ? 20 : 24} />}
+        </motion.button>
+      </div>
 
       {/* Voice Commands Help */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        className="absolute bottom-20 right-0 bg-black/80 border border-purple-500/30 rounded-lg p-3 backdrop-blur-sm text-xs text-purple-300 max-w-xs"
-      >
-        <div className="font-semibold mb-2">Voice Commands:</div>
-        <div className="space-y-1">
-          <div>• "Status" - System status</div>
-          <div>• "Transform" - Transformation</div>
-          <div>• "Chambers" - List chambers</div>
-          <div>• "Energy" - Power status</div>
-          <div>• "Prophecy" - Generate vision</div>
-          <div>• "Help" - Show commands</div>
-        </div>
-      </motion.div>
+      <AnimatePresence>
+        {(showHelp || (!isMobile && !isListening && !isProcessing)) && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className={`absolute ${isMobile ? 'bottom-16 right-0' : 'bottom-20 right-0'} bg-black/80 border border-purple-500/30 rounded-lg p-3 backdrop-blur-sm text-xs text-purple-300 ${isMobile ? 'max-w-xs' : 'max-w-xs'}`}
+          >
+            <div className="font-semibold mb-2 flex items-center justify-between">
+              Voice Commands:
+              {isMobile && (
+                <button
+                  onClick={() => setShowHelp(false)}
+                  className="text-gray-400 hover:text-white ml-2"
+                >
+                  ×
+                </button>
+              )}
+            </div>
+            <div className="space-y-1">
+              <div>• "Status" - System status</div>
+              <div>• "Transform" - Transformation</div>
+              <div>• "Chambers" - List chambers</div>
+              <div>• "Energy" - Power status</div>
+              <div>• "Prophecy" - Generate vision</div>
+              <div>• "Help" - Show commands</div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

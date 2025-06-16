@@ -497,7 +497,7 @@
   overflow: hidden;
 }
 
-/* Responsive adjustments */
+/* Mobile-specific optimizations */
 @media (max-width: 768px) {
   .floating-particles::before,
   .floating-particles::after,
@@ -508,5 +508,101 @@
   
   .holographic-elements {
     display: none;
+  }
+
+  /* Reduce animation intensity on mobile for better performance */
+  .magical-background {
+    animation-duration: 20s;
+  }
+
+  .rune-pattern {
+    animation-duration: 30s;
+  }
+
+  /* Optimize text effects for mobile */
+  .magical-glow {
+    text-shadow: 
+      0 0 3px currentColor,
+      0 0 6px currentColor;
+    animation: none;
+  }
+
+  /* Simplify scrollbar for mobile */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  /* Reduce glow effects on mobile */
+  .success-glow,
+  .error-glow,
+  .critical-glow {
+    animation: none;
+    text-shadow: 0 0 5px currentColor;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Increase touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Disable hover effects on touch devices */
+  .hover\:scale-110:hover {
+    transform: none;
+  }
+
+  /* Simplify animations for touch devices */
+  .animate-pulse {
+    animation: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .magical-background,
+  .rune-pattern {
+    opacity: 0.8;
+  }
+
+  .text-purple-400 {
+    color: #a855f7;
+  }
+
+  .border-purple-500\/30 {
+    border-color: rgba(168, 85, 247, 0.6);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .magical-background,
+  .rune-pattern,
+  .floating-particles::before,
+  .floating-particles::after,
+  .mystical-orbs::before,
+  .mystical-orbs::after,
+  .magical-glow,
+  .boot-glow,
+  .sparkle-text,
+  .pulse-text,
+  .shimmer-text,
+  .glitch-text,
+  .success-glow,
+  .error-glow,
+  .critical-glow,
+  .mystical-notification-bg,
+  .floating-rune,
+  .energy-flow-visualization::before,
+  .dimensional-rift::before,
+  .energy-field {
+    animation: none;
+  }
+
+  .animate-pulse,
+  .animate-spin {
+    animation: none;
   }
 }

@@ -28,7 +28,7 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ notifications, 
   };
 
   return (
-    <div className="fixed top-20 right-4 z-50 space-y-2 max-w-sm">
+    <div className="fixed top-16 md:top-20 right-2 md:right-4 z-50 space-y-2 max-w-xs md:max-w-sm">
       <AnimatePresence>
         {notifications.map((notification) => (
           <motion.div
@@ -37,31 +37,31 @@ const NotificationSystem: React.FC<NotificationSystemProps> = ({ notifications, 
             animate={{ opacity: 1, x: 0, scale: 1 }}
             exit={{ opacity: 0, x: 300, scale: 0.8 }}
             transition={{ duration: 0.3 }}
-            className={`border rounded-lg p-4 backdrop-blur-sm ${getColors(notification.type)} relative overflow-hidden`}
+            className={`border rounded-lg p-3 md:p-4 backdrop-blur-sm ${getColors(notification.type)} relative overflow-hidden`}
           >
             {/* Mystical Background Effect */}
             <div className="absolute inset-0 mystical-notification-bg opacity-20"></div>
             
             <div className="relative z-10">
               <div className="flex items-start justify-between mb-2">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-1 min-w-0">
                   {getIcon(notification.type)}
-                  <h4 className="font-semibold text-sm">{notification.title}</h4>
+                  <h4 className="font-semibold text-xs md:text-sm truncate">{notification.title}</h4>
                 </div>
                 <button
                   onClick={() => onRemove(notification.id)}
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-400 hover:text-white transition-colors flex-shrink-0 ml-2"
                 >
                   <X size={14} />
                 </button>
               </div>
               
-              <p className="text-xs opacity-90 mb-2">{notification.message}</p>
+              <p className="text-xs opacity-90 mb-2 break-words">{notification.message}</p>
               
               <div className="flex justify-between items-center text-xs opacity-70">
                 <span>{notification.timestamp.toLocaleTimeString()}</span>
                 {notification.chamber && (
-                  <span className="bg-black/30 px-2 py-1 rounded">
+                  <span className="bg-black/30 px-2 py-1 rounded truncate max-w-20 md:max-w-none">
                     {notification.chamber}
                   </span>
                 )}

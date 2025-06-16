@@ -49,20 +49,20 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-black to-indigo-950 relative overflow-hidden flex items-center justify-center">
+    <div className="min-h-screen bg-gradient-to-br from-purple-950 via-black to-indigo-950 relative overflow-hidden flex items-center justify-center p-4">
       {/* Animated Background */}
       <div className="absolute inset-0 magical-background opacity-50"></div>
       <div className="absolute inset-0 rune-pattern opacity-20"></div>
       
       {/* Login Form */}
-      <div className="relative z-10 max-w-md w-full mx-4">
-        <div className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-8 shadow-2xl">
+      <div className="relative z-10 max-w-md w-full">
+        <div className="bg-black/40 backdrop-blur-xl border border-purple-500/30 rounded-2xl p-6 md:p-8 shadow-2xl">
           {/* Header */}
-          <div className="text-center mb-8">
-            <div className="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-4 animate-pulse flex items-center justify-center">
-              <Zap className="w-8 h-8 text-white" />
+          <div className="text-center mb-6 md:mb-8">
+            <div className="w-12 h-12 md:w-16 md:h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mx-auto mb-4 animate-pulse flex items-center justify-center">
+              <Zap className="w-6 h-6 md:w-8 md:h-8 text-white" />
             </div>
-            <h1 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
+            <h1 className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400 mb-2">
               ETERNUM OS
             </h1>
             <p className="text-purple-300 text-sm">Mystical Access Terminal</p>
@@ -78,7 +78,7 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-3 bg-purple-900/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20"
+                className="w-full px-4 py-3 bg-purple-900/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 text-sm md:text-base"
                 placeholder="Enter your mystical name..."
                 required
               />
@@ -93,7 +93,7 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full px-4 py-3 bg-purple-900/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 pr-12"
+                  className="w-full px-4 py-3 bg-purple-900/20 border border-purple-500/30 rounded-lg text-white placeholder-purple-400 focus:outline-none focus:border-purple-400 focus:ring-2 focus:ring-purple-400/20 pr-12 text-sm md:text-base"
                   placeholder="Speak the words of power..."
                   required
                 />
@@ -116,7 +116,7 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-400/20 disabled:opacity-50 transition-all duration-200"
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-pink-700 focus:outline-none focus:ring-2 focus:ring-purple-400/20 disabled:opacity-50 transition-all duration-200 text-sm md:text-base"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center space-x-2">
@@ -133,9 +133,9 @@ const Authentication: React.FC<AuthenticationProps> = ({ onAuthenticate }) => {
           <div className="mt-6 pt-6 border-t border-purple-500/20">
             <p className="text-purple-400 text-xs mb-2">Demo Credentials:</p>
             <div className="space-y-1 text-xs text-purple-300">
-              <div>Valtharix / MirrorSoul_Prime (Root)</div>
-              <div>Executor_Prime / Sigil_Command (Executor)</div>
-              <div>Initiate / Basic_Access (Guest)</div>
+              <div className="break-all">Valtharix / MirrorSoul_Prime (Root)</div>
+              <div className="break-all">Executor_Prime / Sigil_Command (Executor)</div>
+              <div className="break-all">Initiate / Basic_Access (Guest)</div>
             </div>
           </div>
         </div>
