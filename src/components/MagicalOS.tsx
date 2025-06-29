@@ -9,9 +9,16 @@ import SpellCraftingModule from './SpellCraftingModule';
 import SoulRegistry from './SoulRegistry';
 import ProphecyEngine from './ProphecyEngine';
 import VoiceCommandInterface from './VoiceCommandInterface';
-import MnemosyneAI from './MnemosyneAI';
+import EnhancedMnemosyneAI from './EnhancedMnemosyneAI';
+import QuestSystem from './QuestSystem';
+import EnhancedAudioSystem from './EnhancedAudioSystem';
+import CollaborationHub from './CollaborationHub';
+import ThreeDChamberView from './ThreeDChamberView';
+import MiniGames from './MiniGames';
+import TradingSystem from './TradingSystem';
+import AnalyticsDashboard from './AnalyticsDashboard';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown } from 'lucide-react';
+import { Menu, X, ChevronDown, Volume2, Users, Gamepad2, ShoppingCart, BarChart3, Box } from 'lucide-react';
 
 interface User {
   username: string;
@@ -50,9 +57,11 @@ const MagicalOS: React.FC = () => {
   ]);
   const [currentTheme, setCurrentTheme] = useState<string>('default');
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [audioEnabled, setAudioEnabled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [selectedChamber, setSelectedChamber] = useState('Prism Atrium');
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -138,6 +147,11 @@ const MagicalOS: React.FC = () => {
       message: `${chamber} energy adjusted to ${newAllocation}%`,
       chamber
     });
+
+    // Trigger quest progress
+    if ((window as any).dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('quest_action', { detail: { action: 'energy_check' } }));
+    }
   };
 
   const getRandomSystemEvent = () => {
@@ -187,7 +201,18 @@ const MagicalOS: React.FC = () => {
       onUpdateAllocation={updateEnergyAllocation}
       onNotification={addNotification}
     />,
-    llama: <MnemosyneAI user={user} onNotification={addNotification} />
+    quests: <QuestSystem user={user} onNotification={addNotification} />,
+    collaboration: <CollaborationHub user={user} onNotification={addNotification} />,
+    '3d-view': <ThreeDChamberView 
+      user={user} 
+      onNotification={addNotification} 
+      selectedChamber={selectedChamber}
+      energyLevel={energyAllocations.find(e => e.chamber === selectedChamber)?.allocated || 50}
+    />,
+    minigames: <MiniGames user={user} onNotification={addNotification} />,
+    trading: <TradingSystem user={user} onNotification={addNotification} />,
+    analytics: <AnalyticsDashboard user={user} onNotification={addNotification} />,
+    llama: <EnhancedMnemosyneAI user={user} onNotification={addNotification} />
   };
 
   const modules = [
@@ -195,8 +220,14 @@ const MagicalOS: React.FC = () => {
     { id: 'map', name: 'Dimensional Map', icon: '🗺️', shortName: 'Map' },
     { id: 'spellcraft', name: 'Spell Crafting', icon: '🔮', shortName: 'Spells' },
     { id: 'souls', name: 'Soul Registry', icon: '👥', shortName: 'Souls' },
-    { id: 'prophecy', name: 'Prophecy Engine', icon: '🔮', shortName: 'Oracle' },
+    { id: 'prophecy', name: 'Prophecy Engine', icon: '🌟', shortName: 'Oracle' },
     { id: 'energy', name: 'Energy Manager', icon: '⚡', shortName: 'Energy' },
+    { id: '3d-view', name: '3D Chamber View', icon: '🏛️', shortName: '3D' },
+    { id: 'minigames', name: 'Mini-Games', icon: '🎮', shortName: 'Games' },
+    { id: 'trading', name: 'Trading System', icon: '🛒', shortName: 'Trade' },
+    { id: 'analytics', name: 'Analytics', icon: '📊', shortName: 'Stats' },
+    { id: 'quests', name: 'Quest System', icon: '🏆', shortName: 'Quests' },
+    { id: 'collaboration', name: 'Collaboration Hub', icon: '👥', shortName: 'Collab' },
     { id: 'llama', name: 'Mnemosyne-Elyr', icon: '🧠', shortName: 'AI' }
   ];
 
@@ -276,7 +307,7 @@ const MagicalOS: React.FC = () => {
               <option value="celestial">Celestial</option>
             </select>
 
-            {/* Voice Toggle */}
+            {/* Enhanced Controls */}
             <button
               onClick={() => setVoiceEnabled(!voiceEnabled)}
               className={`px-2 py-1 rounded text-xs transition-colors ${
@@ -286,6 +317,18 @@ const MagicalOS: React.FC = () => {
               }`}
             >
               Voice {voiceEnabled ? 'ON' : 'OFF'}
+            </button>
+
+            <button
+              onClick={() => setAudioEnabled(!audioEnabled)}
+              className={`px-2 py-1 rounded text-xs transition-colors ${
+                audioEnabled 
+                  ? 'bg-blue-500/20 border border-blue-500/30 text-blue-400' 
+                  : 'bg-gray-500/20 border border-gray-500/30 text-gray-400'
+              }`}
+            >
+              <Volume2 size={12} className="inline mr-1" />
+              Audio
             </button>
             
             <button
@@ -327,11 +370,11 @@ const MagicalOS: React.FC = () => {
                 </div>
                 
                 {/* Mobile Controls */}
-                <div className="flex items-center justify-between">
+                <div className="grid grid-cols-2 gap-2">
                   <select 
                     value={currentTheme}
                     onChange={(e) => setCurrentTheme(e.target.value)}
-                    className="bg-black/30 border border-purple-500/30 rounded px-2 py-1 text-xs text-purple-300 flex-1 mr-2"
+                    className="bg-black/30 border border-purple-500/30 rounded px-2 py-1 text-xs text-purple-300"
                   >
                     <option value="default">Default Theme</option>
                     <option value="fire">Fire</option>
@@ -353,16 +396,29 @@ const MagicalOS: React.FC = () => {
                   </button>
                 </div>
 
-                {/* Mobile Sidebar Toggle */}
-                <button
-                  onClick={() => {
-                    setIsSidebarOpen(!isSidebarOpen);
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="w-full px-3 py-2 bg-purple-500/20 border border-purple-500/30 rounded text-purple-300 text-sm"
-                >
-                  {isSidebarOpen ? 'Hide' : 'Show'} System Status
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => setAudioEnabled(!audioEnabled)}
+                    className={`px-3 py-1 rounded text-xs transition-colors ${
+                      audioEnabled 
+                        ? 'bg-blue-500/20 border border-blue-500/30 text-blue-400' 
+                        : 'bg-gray-500/20 border border-gray-500/30 text-gray-400'
+                    }`}
+                  >
+                    <Volume2 size={12} className="inline mr-1" />
+                    Audio
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setIsSidebarOpen(!isSidebarOpen);
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="px-3 py-1 bg-purple-500/20 border border-purple-500/30 rounded text-purple-300 text-xs"
+                  >
+                    {isSidebarOpen ?   'Hide' : 'Show'} Status
+                  </button>
+                </div>
               </div>
             </motion.div>
           )}
@@ -467,9 +523,16 @@ const MagicalOS: React.FC = () => {
         />
       )}
 
-      {/* Mnemosyne-Elyr AI Interface - Responsive */}
+      {/* Enhanced Audio System */}
+      <EnhancedAudioSystem
+        currentTheme={currentTheme}
+        isVisible={audioEnabled}
+        onToggle={() => setAudioEnabled(!audioEnabled)}
+      />
+
+      {/* Enhanced AI Interface - Responsive */}
       {activeModule !== 'llama' && (
-        <MnemosyneAI 
+        <EnhancedMnemosyneAI 
           user={user}
           onNotification={addNotification}
         />
