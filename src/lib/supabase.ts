@@ -7,6 +7,17 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // Database Types
+export interface UserProfile {
+  id: string;
+  username: string;
+  access_level: 'guest' | 'executor' | 'root';
+  mystical_essence: number;
+  current_title: string;
+  titles: string[];
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SoulEntity {
   id: string;
   name: string;
@@ -84,9 +95,44 @@ export interface EnergyAllocation {
 
 // Database service functions
 export class DatabaseService {
+  // User Profile Functions
+  static async getUserProfile(userId: string) {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  static async createUserProfile(profile: Omit<UserProfile, 'created_at' | 'updated_at'>) {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .insert([profile])
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
+  static async updateUserProfile(userId: string, updates: Partial<UserProfile>) {
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .update(updates)
+      .eq('id', userId)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return data;
+  }
+
   // Soul Registry Functions
-  static async getSouls(userId: string, accessLevel: string) {
-    let query = supabase
+  static async getSouls() {
+    const { data, error } = await supabase
       .from('souls')
       .select(`
         *,
@@ -94,15 +140,6 @@ export class DatabaseService {
       `)
       .order('created_at', { ascending: false });
 
-    // Apply access level filtering
-    if (accessLevel === 'guest') {
-      query = query.eq('access_level', 'public');
-    } else if (accessLevel === 'executor') {
-      query = query.in('access_level', ['public', 'restricted']);
-    }
-    // Root users can see all
-
-    const { data, error } = await query;
     if (error) throw error;
     return data;
   }
@@ -121,7 +158,7 @@ export class DatabaseService {
   static async updateSoul(id: string, updates: Partial<SoulEntity>) {
     const { data, error } = await supabase
       .from('souls')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
@@ -185,18 +222,12 @@ export class DatabaseService {
   }
 
   // Prophecy Functions
-  static async getProphecies(userId: string, accessLevel: string) {
-    let query = supabase
+  static async getProphecies() {
+    const { data, error } = await supabase
       .from('prophecies')
       .select('*')
       .order('created_at', { ascending: false });
 
-    // Guests can only see public prophecies
-    if (accessLevel === 'guest') {
-      query = query.eq('created_by', userId);
-    }
-
-    const { data, error } = await query;
     if (error) throw error;
     return data;
   }
@@ -215,7 +246,7 @@ export class DatabaseService {
   static async updateProphecy(id: string, updates: Partial<Prophecy>) {
     const { data, error } = await supabase
       .from('prophecies')
-      .update({ ...updates, updated_at: new Date().toISOString() })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
