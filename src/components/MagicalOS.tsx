@@ -9,7 +9,7 @@ import SpellCraftingModule from './SpellCraftingModule';
 import SoulRegistry from './SoulRegistry';
 import ProphecyEngine from './ProphecyEngine';
 import VoiceCommandInterface from './VoiceCommandInterface';
-import EnhancedMnemosyneAI from './EnhancedMnemosyneAI';
+import EnhancedMnemosyneAI from './MnemosyneAI';
 import QuestSystem from './QuestSystem';
 import EnhancedAudioSystem from './EnhancedAudioSystem';
 import CollaborationHub from './CollaborationHub';
